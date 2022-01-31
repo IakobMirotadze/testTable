@@ -1,74 +1,97 @@
-/**
- * @license
- * Copyright 2019 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
 import {LitElement, html, css} from 'lit';
 
-/**
- * An example element.
- *
- * @fires count-changed - Indicates when the count changes
- * @slot - This element has a slot
- * @csspart button - The button
- */
 export class MyElement extends LitElement {
   static get styles() {
     return css`
       :host {
-        display: block;
-        border: solid 1px gray;
+        display: grid;
         padding: 16px;
-        max-width: 800px;
+        max-width: 400px;
+        grid-row-gap: 24px;
+      }
+      .table {
+        display: grid;
+        grid-template-columns: repeat(5,1fr);
       }
     `;
   }
 
+  render() {
+    return html`
+      <h1>Hello ${this.list[this.list.length-1]?.name}!</h1>
+      Name: <input @input='${this.setName}' value='${this.userObject.name}' >
+      Lastname: <input @input='${this.setLastName}'  value='${this.userObject.lastName}'>
+      Age: <input @input='${this.setAge}'  value='${this.userObject.age}'>
+      Email: <input @input='${this.setEmail}'  value='${this.userObject.email}'>
+      Phone: <input @input='${this.setPhone}'  value='${this.userObject.phone}'>
+      <button class='submit' @click='${this.onSubmitFunction}'>Sumbit</button>
+      
+      <div class='table'>
+        <div>Name</div>
+        <div>Lastname</div>
+        <div>age</div>
+        <div>email</div>
+        <div>phone</div>
+        ${this.list.map((user)=> {
+          return html`
+            <div>${user.name}</div>
+            <div>${user.lastName}</div>
+            <div>${user.age}</div>
+            <div>${user.email}</div>
+            <div>${user.phone}</div>
+          `
+        })}
+      </div>
+    `;
+  }
+
+  // ინფუთებიდან ამოვიღო მონაცემები, (ინფუთებში ჩაწერილი მნიშვნელობები შევინახო)
+  // საბმითის დროს მჭირდება რომ დავამატო სიაში ეს ჩემი მონაცემები,
+  // // 1. მონაცემები წავიკითხო, 2. თუ სია არ არსებობს შევქმნა ახალი მონაცემით, თუ არსებობს, დავამატო,
+  // სია უნდა გამოვაჩინო
+
   static get properties() {
     return {
-      /**
-       * The name to say "Hello" to.
-       * @type {string}
-       */
-      name: {type: String},
-
-      /**
-       * The number of times the button has been clicked.
-       * @type {number}
-       */
-      count: {type: Number},
+      list: {type: Array}
     };
   }
 
   constructor() {
     super();
-    this.name = 'World';
-    this.count = 0;
+    this.count = 12;
+    this.list= [];
+    this.userObject= {};
   }
 
-  render() {
-    return html`
-      <h1>${this.sayHello(this.name)}!</h1>
-      <button @click=${this._onClick} part="button">
-        Click Count: ${this.count}
-      </button>
-      <slot></slot>
-    `;
+  setName(event) {
+    var value = event.target.value;
+    this.userObject.name = value
   }
 
-  _onClick() {
-    this.count++;
-    this.dispatchEvent(new CustomEvent('count-changed'));
+  setLastName(event) {
+    var value = event.target.value;
+    this.userObject.lastName = value
   }
 
-  /**
-   * Formats a greeting
-   * @param name {string} The name to say "Hello" to
-   * @returns {string} A greeting directed at `name`
-   */
-  sayHello(name) {
-    return `Hello, ${name}`;
+  setAge(event) {
+    var value = event.target.value;
+    this.userObject.age = value
+  }
+
+  setEmail(event) {
+    var value = event.target.value;
+    this.userObject.email = value
+  }
+
+  setPhone(event) {
+    var value = event.target.value;
+    this.userObject.phone = value
+  }
+
+  onSubmitFunction(){
+    var newObject = {...this.userObject};
+    this.userObject = {}
+    this.list = [...this.list, newObject]
   }
 }
 
